@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"  // Change to your database provider (e.g., MySQL, SQLite, etc.)
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id                   String   @id @default(uuid())
+  name                 String
+  email                String   @unique
+  password             String
+  sector               String?
+  type                 String?
+  targetCustomer       String?
+  size                 String?
+  currentPainPoints    String[]
+  businessGoals        String[]
+  offers               String[]
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}

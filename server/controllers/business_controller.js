@@ -138,7 +138,7 @@ export const isAuthenticated = async (req, res, next) => {
         next();
     } catch (error) {
         console.error("Authentication error:", error);
-        return res.status(403).json({ message: "Invalid or expired token" });
+        return res.status(403).json({ message: "Invalid or expired token " ,error:error });
     }
 };
 
@@ -248,6 +248,44 @@ export const getinsights = async (req, res) => {
     });
   } catch (error) {
     console.error("Error generating insight:", error?.response?.data || error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+export const predictCampaign = async (req, res) => {
+  try {
+    const name = req.business.name;
+    const domain = req.business.sector;
+    const { product, Budget, Duration, Clicks, Conversions, CTR, CPC, Conversion_Rate } = req.body;
+
+    // Construct request payload for FastAPI
+    const requestData = {
+      company_name: name,
+      company_domain: domain,
+      product,
+      user_input: {
+        Budget,
+        Duration,
+        Clicks,
+        Conversions,
+        CTR,
+        CPC,
+        Conversion_Rate
+      }
+    };
+
+    // Call FastAPI service
+    const fastApiResponse = await axios.post(`${process.env.FAST_API}/predict_campaign`, requestData);
+
+    // Return response to client
+    res.status(200).json({
+      message: "Campaign prediction successful",
+      prediction: fastApiResponse.data
+    });
+  } catch (error) {
+    console.error("Error predicting campaign:", error?.response?.data || error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

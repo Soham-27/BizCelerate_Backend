@@ -6,10 +6,11 @@ import cors from "cors";
 import cron from "node-cron";
 import { PrismaClient } from "@prisma/client";
 import businessRouter from "./routes/businessRoutes.js";
+import userRouter from "./routes/user_routes.js";
 
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 7845;
 const prisma = new PrismaClient();
 // CORS middleware should be one of the first middleware
 app.use(
@@ -35,6 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // // Routes
 app.use("/business",businessRouter)
+app.use("/user",userRouter)
 // app.use("/quiz", quizRouter);
 // app.use("/result", resultRouter);
 // app.use("/analytics", analyticsRouter);

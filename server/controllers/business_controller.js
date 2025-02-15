@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
-const JWT_EXPIRES_IN = '1h'; // Token expiration time
+const JWT_EXPIRES_IN = '3d'; // Token expiration time
 
 // Generate JWT Token
 const generateToken = (business) => {
@@ -48,48 +48,55 @@ export const registerBusiness = async (req, res) => {
 
 
 export const updateBusinessProfile = async (req, res) => {
-    try {
+  try {
       // Extract additional fields from request body
       const { sector, type, targetCustomer, size, currentPainPoints, businessGoals, offers } = req.body;
-      
+
       // Get the business ID from the authenticated request (set by your authentication middleware)
       const businessId = req.business.id;
-  
+
       // Update the business record with the new information.
       const updatedBusiness = await prisma.business.update({
-        where: { id: businessId },
-        data: {
-          sector,
-          type,
-          targetCustomer,
-          size,
-          currentPainPoints,
-          businessGoals,
-          offers
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          sector: true,
-          type: true,
-          targetCustomer: true,
-          size: true,
-          currentPainPoints: true,
-          businessGoals: true,
-          offers: true,
-          createdAt: true,
-          updatedAt: true
-        }
+          where: { id: businessId },
+          data: {
+              sector,
+              type,
+              targetCustomer,
+              size,
+              currentPainPoints,
+              businessGoals,
+              offers
+          },
+          select: {
+              id: true,
+              name: true,
+              email: true,
+              sector: true,
+              type: true,
+              targetCustomer: true,
+              size: true,
+              currentPainPoints: true,
+              businessGoals: true,
+              offers: true,
+              createdAt: true,
+              updatedAt: true
+          }
       });
-  
-      res.status(200).json({ message: "Business profile updated successfully", updatedBusiness });
-    } catch (error) {
+
+      // Send the updated sector to the FastAPI service
+      const fastApiResponse = await axios.post(`${process.env.FAST_API}/analyze`, {
+          domain: sector
+      });
+
+      res.status(200).json({ 
+          message: "Business profile updated successfully", 
+          updatedBusiness
+      });
+  } catch (error) {
       console.error("Error updating business profile:", error);
       res.status(500).json({ message: "Internal server error" });
-    }
+  }
 };
-  
 
 // Middleware to Authenticate JWT
 export const isAuthenticated = async (req, res, next) => {
@@ -216,11 +223,31 @@ export const generateContent = async (req, res) => {
 
     console.log("Request Body:", requestBody);
 
-    const response = await axios.post("http://localhost:8000/generate-content", requestBody);
+    const response = await axios.post(`${process.env.FAST_API}/generate-content`, requestBody);
 
     return res.json(response.data);
   } catch (error) {
     console.error("Error generating content:", error?.response?.data || error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+
+export const getinsights = async (req, res) => {
+  try {
+    const domain = req.business.sector; // Extract sector from authenticated business
+    console.log("Fetching insights for:", domain);
+
+    // Send a GET request to the FastAPI service
+    const fastApiResponse = await axios.get(`${process.env.FAST_API}/insights/${domain}`);
+
+    res.status(200).json({
+      message: "Insights retrieved successfully",
+      insights: fastApiResponse.data
+    });
+  } catch (error) {
+    console.error("Error generating insight:", error?.response?.data || error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

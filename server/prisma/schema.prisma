@@ -18,7 +18,32 @@ model Business {
   size                 String?
   currentPainPoints    String[]
   businessGoals        String[]
-  offers               String[]
+  offers               Json?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+  users       User[]
+}
+
+
+model User {
+  id                String    @id @default(uuid())
+  businessId        String    
+  business          Business  @relation(fields: [businessId], references: [id])
+  username          String
+  isNewUser         Boolean   @default(true)
+  
+  // Core purchase metrics - essential for recommendations
+  purchaseFrequency Int       @default(0)      // How often they buy
+  averageOrderValue Float     @default(0)      // How much they spend
+  frequentItems     String[]  @default([])     // What they buy most
+  
+  // Basic loyalty status
+  currentTier       String    @default("Bronze")
+  pointsBalance     Int       @default(0)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([businessId, username])
+  @@index([businessId])
 }

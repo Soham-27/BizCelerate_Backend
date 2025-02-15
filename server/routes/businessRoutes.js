@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerBusiness,isAuthenticated, updateBusinessOffers, updateBusinessProfile, loginBusiness, generateContent} from "../controllers/business_controller.js";
+import { registerBusiness,isAuthenticated, updateBusinessOffers, updateBusinessProfile, loginBusiness, generateContent, getinsights} from "../controllers/business_controller.js";
 
 
 const businessRouter=Router();
@@ -10,5 +10,7 @@ businessRouter.get('/dashboard', isAuthenticated, (req, res) => {
 businessRouter.post("/login",loginBusiness)
 businessRouter.post("/generate-content",)
 businessRouter.put('/update-profile', isAuthenticated,updateBusinessProfile);
-businessRouter.post("/generate_content",isAuthenticated,generateContent)
+businessRouter.post("/generate_content",isAuthenticated,generateContent);
+
+businessRouter.get("/insights",isAuthenticated,getinsights);
 export default businessRouter;

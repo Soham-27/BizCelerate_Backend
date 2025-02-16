@@ -289,3 +289,38 @@ export const predictCampaign = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
+
+export const generateAds=async(req , res)=>{
+  try {
+    var data = JSON.stringify({
+      "prompt": [
+         `make a  Ad poster for ${req.business.name} whose in ${req.business.sector} this sector.
+         1.poster contains offers ${req.business.offers}
+         2.poster should be attractive and catchy for user
+         3.Text on poster should be well alligened`
+      ],
+      "image_style": "poster",
+      "orientation": "Square",
+      "output_type": "url"
+    });
+ 
+  var config = {
+  method: 'post',
+  url: 'https://api.worqhat.com/api/ai/images/generate/v3',
+  headers: { 
+      'Authorization': `Bearer ${process.env.worqhat}`,
+     'Content-Type': 'application/json'
+  },
+  data : data
+  };
+  const response = await axios(config);
+  res.json({response:response.data});
+
+  } catch (error) {
+    console.error("Error generating images:", error?.response?.data || error.message);
+    res.status(500).json({ error: "Error generating images" });
+  }
+}

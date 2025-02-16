@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerBusiness,isAuthenticated, updateBusinessOffers, updateBusinessProfile, loginBusiness, generateContent, getinsights, predictCampaign} from "../controllers/business_controller.js";
+import { registerBusiness,isAuthenticated, updateBusinessOffers, updateBusinessProfile, loginBusiness, generateContent, getinsights, predictCampaign, generateAds} from "../controllers/business_controller.js";
 import { recommandLoyaltyPrograms } from "../controllers/user_controller.js";
 
 
@@ -16,6 +16,8 @@ businessRouter.post("/generate_content",isAuthenticated,generateContent);
 businessRouter.get("/insights",isAuthenticated,getinsights);
 
 businessRouter.post("/predict",isAuthenticated,predictCampaign);
+
+businessRouter.get("/generateAds",isAuthenticated,generateAds);
 
 
 export default businessRouter;

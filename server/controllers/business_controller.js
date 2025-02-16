@@ -268,13 +268,13 @@ export const predictCampaign = async (req, res) => {
       company_domain: domain,
       product:product,
       user_input: {
-        Budget:Budget,
-        Duration:Duration,
-        Clicks:Clicks,
-        Conversions:Conversions,
-        CTR:CTR,
-        CPC:CPC,
-        Conversion_Rate:Conversion_Rate
+        Budget:parseInt(Budget),
+        Duration:parseInt(Duration),
+        Clicks:parseInt(Clicks),
+        Conversions:parseInt(Conversions),
+        CTR:parseFloat(CTR),
+        CPC:parseFloat(CPC),
+        Conversion_Rate:parseInt(Conversion_Rate)
       }
     };
 

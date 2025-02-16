@@ -259,20 +259,22 @@ export const predictCampaign = async (req, res) => {
     const name = req.business.name;
     const domain = req.business.sector;
     const { product, Budget, Duration, Clicks, Conversions, CTR, CPC, Conversion_Rate } = req.body;
+    console.log(name)
+    console.log(domain)
 
     // Construct request payload for FastAPI
     const requestData = {
       company_name: name,
       company_domain: domain,
-      product,
+      product:product,
       user_input: {
-        Budget,
-        Duration,
-        Clicks,
-        Conversions,
-        CTR,
-        CPC,
-        Conversion_Rate
+        Budget:Budget,
+        Duration:Duration,
+        Clicks:Clicks,
+        Conversions:Conversions,
+        CTR:CTR,
+        CPC:CPC,
+        Conversion_Rate:Conversion_Rate
       }
     };
 
